@@ -1,0 +1,360 @@
+Trabalho Prático 1 – Implementação de biblioteca de vetores de registos e listas ligadas
+1. Informação geral
+O trabalho prático 1 consiste na implementação de funções a incorporar numa biblioteca de
+funções para manipulação de vetores de registos e listas ligadas.
+Este trabalho deverá ser feito de forma autónoma por cada grupo até à data limite estabelecida.
+A consulta de informação nas diversas fontes disponíveis é aceitável. No entanto, o código
+submetido deverá ser apenas da autoria dos elementos do grupo e quaisquer cópias detetadas
+serão devidamente penalizadas. A incapacidade de explicar o código submetido por parte de
+algum elemento do grupo implicará também uma penalização.
+O prazo limite para submissão (através do Moodle) é o dia 4 de Abril às 13:30h.
+2. Conceito
+A loja ELECOMP está para abrir brevemente. É uma loja especializada na venda de componentes
+eletrónicos, tais como: circuitos integrados, díodos, resistências, transístores, etc. Para tal,
+precisam de uma base de dados para gerir o stock no armazém dos componentes de eletrónica
+e as compras dos clientes.
+3. Implementação do trabalho
+O arquivo comprimido ESDA_2022_T1.zip contém os ficheiros necessários para a realização
+deste trabalho, nomeadamente:
+● componentes.h: declarações das funções da biblioteca do armazém, bem como dos
+registos envolvidos, nomeadamente armazem. componente, fatura e parcela.
+● componentes.c: ficheiro onde deverão ser implementadas as funções pedidas,
+relativas à biblioteca componentes.h .
+● armazem-teste.c : inclui o programa principal que invoca e realiza testes básicos às
+funções implementadas.
+● db_small.txt: ficheiro de texto com informações sobre os componentes existentes no
+armazém.
+● lista_de_compras.txt: ficheiro de texto com informações sobre os componentes de
+determinada compra.
+Notas importantes:
+1. Apenas deverá ser alterado o ficheiro componentes.c que será o único a ser
+considerado na submissão dos trabalhos.
+2. Detalhes adicionais sobre as funções (a implementar) poderão ser encontrados junto
+ao protótipo respetivo em componentes.h .
+1Os registos de dados componente , armazem, fatura e parcela são a base da biblioteca e
+têm as seguintes declarações:
+typedef struct
+{
+/** Identificacao unica do componente **/
+char ID[10];
+/** Nome do componente **/
+char *nome;
+/** Quantidade que existe deste componente no armazém **/
+int quantidade;
+/** Preço **/
+float preco;
+/** Categoria do componente **/
+char categoria[MAX_CHAR];
+} componente;
+No registo componente são guardados: 1) a identificação ( ID ) do componente; 2) o seu nome
+( nome ); 3) um inteiro com a quantidade que existe deste componente no armazém
+( quantidade ); 4) um float com o preço do componente ( preco ); 5) a categoria em que o
+componente está inserido ( categoria ). Este registo contém a informação de cada componente
+eletrónico.
+O registo de dados armazem aponta para um vetor de componente. Inclui também o número
+de posições válidas do vetor ( tamanho ). Este registo é o que mantém o stock do armazém
+atualizado.
+typedef struct
+{
+/** Apontador para o array de
+(apontadores do tipo componente) **/
+componente **componentes;
+componentes
+armazenados
+/** Tamanho do vetor de componentes **/
+long tamanho;
+} armazem;
+No registo parcela são guardados: 1) a identificação ( ID ) do componente; 2) um inteiro com a
+quantidade vendida ( quantidade ); 3) um float com o preço do componente no momento da
+compra ( preco ); 4) um apontador para o próximo elemento ( proximo ). Este registo contém a
+informação de cada parcela de uma fatura.
+typedef struct _parcela
+{
+/** ID do componente **/
+char ID[10];
+/** Quantidade de componentes comprados **/
+int quantidade;
+/** Preco unitário do componente no momento da compra **/
+float preco;
+2/** Apontador para o próximo parcela **/
+struct _ parcela *proximo;
+} parcela;
+O registo de dados fatura aponta para a primeira parcela da fatura. Inclui também o número
+de parcelas da fatura ( n_parcelas ) e o preço total da fatura ( preco_total ). Este registo
+guarda a informação para se poder fazer a fatura de uma compra.
+typedef struct
+{
+/** Apontador para a primeira parcela da fatura **/
+parcela *inicio;
+/** Numero de parcelas da fatura **/
+int n_parcelas;
+/** Preco total da fatura **/
+float preco_total;
+} fatura;
+As funções a implementar neste trabalho encontram-se no ficheiro componentes.c e são:
+1. componente *componente_novo(const char *ID, char *nome, int
+quantidade, float preco, const char *categoria);
+Cria uma nova instância do registo componente , copiando cada um dos argumentos
+para o respetivo campo. Todos os campos devem apresentar valores válidos. A função
+retorna o apontador para o componente criado ou NULL em caso de erro.
+2. armazem *armazem_novo();
+Cria uma nova instância vazia do registo armazem . Deve retornar um apontador para o
+registo. Em caso de erro, deverá retornar NULL .
+3. int componente_insere(armazem *a, componente *c);
+Insere o componente apontado por c no armazem apontado por a , na última posição
+(primeira posição disponível). Caso o componente já exista (tenha o mesmo ID ) deve
+adicionar o número de componentes ao já existente e atualizar o preço. Caso contrário,
+deverá acrescentar o registo ao armazém. Retorna zero se o componente ainda não
+existir e for inserido com sucesso, 1 se o componente já existir e tiver sido apenas
+atualizado ou -1 em caso de erro.
+4. armazem* armazem_importa(const char *nome_ficheiro);
+Importa para um novo armazém o conteúdo de presente em nome_ficheiro ,
+retornando o armazém criado ou NULL em caso de erro. Cada linha do ficheiro
+corresponde a um componente e tem o seguinte formato: ID,nome,
+categoria,quantidade,preco
+5. componente* componente_remove(armazem *a, char *nome);
+Remove o componente de nome nome do armazem apontado por a e corrige o
+armazém no ponto retirado (não deixar posições vazias no vetor componentes). Deverá
+retornar um apontador para o componente removido. Em caso de insucesso, deverá
+retornar NULL .
+6. int componente_apaga(componente *c);
+Elimina o registo componente apontado por c e liberta toda a sua memória alocada.
+Em caso de sucesso, deverá retornar o valor zero ou -1 se insucesso.
+37. int armazem_apaga (armazem *a);
+Elimina o armazem apontado por a e todos os seus componentes, libertando toda a
+memória por eles ocupados. A função deverá retornar zero se bem sucedida ou -1 caso
+contrário.
+8. int *armazem_pesquisa_categoria(armazem *a, const char
+*categoria, int *tam);
+Retorna um vetor de índices dos componentes que apresentarem categoria igual a
+categoria . Retorna por referência o tamanho do vetor de índices através de tam . Em
+caso de insucesso, deverá retornar NULL .
+9. int *armazem_pesquisa_nome(armazem *a, const char *nome, int
+*tam);
+Retorna um vetor de índices dos componentes que apresentem a totalidade ou parte do
+nome pesquisado. Retorna por referência o tamanho do vetor de índices através de tam .
+Em caso de insucesso, deverá retornar NULL .
+10. int vetor_ordena(armazem *a, int *vetor_pos_c, int tam);
+Ordena um vetor de posições do preço mais barato para o mais caro. No caso de
+existirem preços iguais, deve ficar em primeiro lugar o que tiver um ID mais baixo. Em
+caso de sucesso, deverá retornar o valor zero ou -1 se insucesso.
+11. fatura *fatura_nova();
+Cria uma nova instância vazia do registo fatura . Deve retornar um apontador para o
+registo. Em caso de erro, deverá retornar NULL .
+12. parcela *parcela_nova(const char *id, int quantidade, float
+preco);
+Cria uma nova instância do registo parcela , copiando cada um dos argumentos para o
+respetivo campo. Todos os campos devem apresentar valores válidos. A função retorna
+o apontador para a parcela criada ou NULL em caso de erro.
+13. int insere_parcela_fatura(fatura *f, parcela *p);
+Insere a parcela apontada por p na fatura apontada por f , no fim da lista. Caso a
+parcela já exista (tenha o mesmo ID ) deve adicionar a quantidade à parcela já existente.
+Retorna zero se a parcela ainda não existia e foi inserida com sucesso, 1 se a parcela já
+existia e apenas foi atualizada ou -1 em caso de erro.
+14. fatura *cria_fatura(armazem *a, const char *f);
+Cria uma fatura a partir de um ficheiro f , retornando a nova fatura. Em caso de
+insucesso, retorna NULL. Cada linha do ficheiro corresponde a uma parcela da compra e
+tem o seguinte formato: tipo_de_parcela,descrição,quantidade.
+O tipo_de_parcela pode ter 3 formatos diferentes:
+‘C’ – Em que a descrição é referente a uma categoria, dessa categoria escolhe-
+se o mais barato, que tenha a quantidade necessária; se não houver
+nenhum componente que tenha a quantidade necessária, deve-se ir ao mais
+barato usar toda a quantidade, depois sucessivamente ir aos seguintes mais
+barato, usar a quantidade necessária para fazer o pretendido. Se não se
+conseguir chegar a essa quantidade pretendida, só se fatura o que se
+consegue.
+‘I’ – Em que a descrição é referente ao ID do componente. Insere-se a quantidade
+desejada, se não houver o suficiente usa-se o stock disponível.
+‘N’ – Em que a descrição é referente ao nome completo ou parcial do
+componente. Escolhe-se o mais barato, que tenha a quantidade pretendida.
+Se não houver nenhum escolhe-se o que tiver a maior quantidade (usa-se
+essa quantidade), em caso de empate escolhe-se o mais barato.
+Obs: Sempre que criar uma fatura deve atualizar o armazém, ou seja, deve descontar as
+quantidades vendidas no stock do armazém.
+15. int parcela_apaga(parcela *p);
+4 Elimina o registo parcela apontado por p e liberta toda a sua memória alocada. Em
+caso de sucesso, deverá retornar o valor zero ou -1 se insucesso.
+16. int fatura_apaga(fatura *f);
+Elimina a fatura apontada por f e todos os seus componentes, libertando toda a
+memória por ela ocupada. A função deverá retornar zero se bem sucedida ou -1 caso
+contrário.
+Exemplo da função cria_fatura:
+Com este armazém:
+ID Nome Categoria Quantidade
+Preço
+con008610 470K/160V EPCOS condensador 50 8.09
+con008640 560K/100V S.344 PHILIPS condensador 45 5.90
+con008700 1UF/1000V S.B32656 EPCOS condensador 0 5.84
+con008730 3.3UF/100V S.B32592 EPCOS condensador 2 5.84
+con008760 0.1UF/35V GOTA condensador tantalo 30 0.75
+con008790 4.7UF/10V GOTA condensador tantalo 100 7.23
+con008850 22UF/16V CASE B SMD NICHICOM condensador tantalo 100 2.46
+con008880 47UF/6.3V CASE B SMD condensador tantalo 30 0.58
+Caso tipo_de_parcela seja ‘C’, em que existe pelo menos um componente com a quantidade pretendida.
+C,condensador,5
+1º passo: encontrar todos os componentes da categoria condensador.
+con008610 470K/160V EPCOS condensador 50 8.09
+con008640 560K/100V S.344 PHILIPS condensador 45 5.90
+con008700 1UF/1000V S.B32656 EPCOS condensador 0 5.84
+con008730 3.3UF/100V S.B32592 EPCOS condensador 2 5.84
+2º passo: ordenar do mais barato para o mais caro.
+con008700 1UF/1000V S.B32656 EPCOS condensador 0 5.84
+con008730 3.3UF/100V S.B32592 EPCOS condensador 2 5.84
+con008640 560K/100V S.344 PHILIPS condensador 45 5.90
+con008610 470K/160V EPCOS condensador 50 8.09
+53º passo: escolher o componente que tenha a quantidade pretendida o mais barato possível. Logo, como
+con008700 e con008730 não têm a quantidade pretendida, deve ser escolhido con008640.
+Caso tipo_de_parcela seja ‘C’, em que nenhum dos componentes tem a quantidade pretendida.
+C,condensador,55
+1º e 2º passos iguais aos anteriores.
+con008700 1UF/1000V S.B32656 EPCOS condensador 0 5.84
+con008730 3.3UF/100V S.B32592 EPCOS condensador 2 5.84
+con008640 560K/100V S.344 PHILIPS condensador 45 5.90
+con008610 470K/160V EPCOS condensador 50 8.09
+3º passo: verificar que nenhum dos componentes tem a quantidade pretendida.
+4º passo: ir ao 1º componente e usar toda a quantidade disponível, neste caso é 0.
+Passar ao 2º componente e usar toda a quantidade disponível (criar uma parcela com este
+componente com quantidade 2). Quantidade restante pretendida = 55-2 =53.
+Passar ao 3º componente e usar toda a quantidade disponível ou pretendida (criar uma parcela com
+este componente com quantidade 45). Quantidade restante pretendida = 53-45 =8.
+Passar ao 4º componente e usar toda a quantidade disponível ou pretendida (criar uma parcela com
+este componente com quantidade 8).
+Caso tipo_de_parcela seja ‘I’.
+I,con008760,50
+1º passo: encontrar o componente com este ID.Se não tiver quantidade, não se cria a parcela. Se tiver,
+criar uma parcela com a quantidade pretendida. Se não houver o suficiente, usa-se o stock disponível.
+Neste caso a quantidade ficaria igual a 30.
+Caso tipo_de_parcela seja ‘N’.
+N,SMD,150
+1º passo: encontrar o componente que contenha no nome “SMD”.
+con008850 22UF/16V CASE B SMD NICHICOM condensador tantalo 100 2.46
+con008880 47UF/6.3V CASE B SMD condensador tantalo 30 0.58
+2º passo: ordenar do mais barato para o mais caro.
+6con008880 47UF/6.3V CASE B SMD condensador tantalo 30 0.58
+con008850 22UF/16V CASE B SMD NICHICOM condensador tantalo 100 2.46
+3º passo: escolher o componente que tenha a quantidade pretendida o mais barato possível. Como não
+existe, passamos ao próximo passo.
+4º passo: escolher o componente que tem a maior quantidade (neste caso, o 2º) e criar uma parcela com
+100.
+Nota: Os ficheiros de entrada e de teste em que serão avaliados os programas submetidos
+poderão apresentar conteúdo diferente e incluir casos limite: argumentos de funções com
+gamas não previstas. Como tal, é sua responsabilidade garantir que os argumentos são
+devidamente testados de forma a aceitá-los apenas quando válidos.
+4. Teste da biblioteca de funções
+A biblioteca pode ser testada executando o programa armazem-teste . Existe um teste por
+cada função a implementar e que determina se essa função tem o comportamento esperado.
+Note que os testes não são exaustivos. Por isso, os testes devem ser considerados apenas como
+um indicador de uma aparente correta implementação das funcionalidades esperadas.
+Se as funções passarem nos testes unitários incluídos, o programa armazem-teste quando
+executado deverá apresentar o seguinte resultado:
+INICIO DOS TESTES
+...verifica_componente_novo: componente novo nao e' NULL (ok)
+...verifica_componente_novo: ID coincide com o esperado (= con000101) (ok)
+...verifica_componente_novo: Nome do novo componente coincide com o esperado (=
+100UF/100V RD. 85 10X20MM SANSUNG) (ok)
+...verifica_componente_novo: Categoria do novo componente coincide com o esperado (=
+condensador eletrolitico) (ok)
+...verifica_componente_novo: Quantidade do novo componente coincide com o esperado (=
+60) (ok)
+...verifica_componente_novo: Preco do novo componente coincide com o esperado (= 1.34)
+(ok)
+OK: verifica_componente_novo passou
+...verifica_armazem_novo: armazem novo nao e' NULL (ok)
+...verifica_armazem_novo: Tamanho do armazem novo coincide com o esperado (= 0) (ok)
+OK: verifica_armazem_novo passou
+...verifica_componente_insere: inseriu a 1º e 3º componentes nas posicoes corretas (ok)
+...verifica_componente_insere: quantidade do 2º componente coincide com o esperado (=
+30) (ok)
+...verifica_componente_insere: preco do 2º componente coincide com o esperado (= 3.14)
+(ok)
+7OK: verifica_componente_insere passou
+Importando armazem...
+...verifica_armazem_importa: tamanho do armazem coincide com o esperado (= 565) (ok)
+...verifica_armazem_importa: IDs da 1ª e 'ultima posicoes do armazem coincidem com o
+esperado (cir000030 e Cap016950) (ok)
+OK: verifica_armazem_importa passou
+...verifica_componente_remove (teste de componente inexistente): nao removeu nenhum
+componente (ok)
+...verifica_componente_remove (teste de componente valida): removeu com sucesso (ok)
+OK: verifica_componente_remove passou
+...verifica_componente_apaga: apagou com sucesso (ok)
+OK: verifica_componente_apaga passou
+...verifica_armazem_pesquisa_categoria
+retornou NULL (ok)
+(teste
+de
+uma
+categoria
+que
+nao
+existe):
+...verifica_armazem_pesquisa_categoria (teste de uma categoria que existe): numero de
+indices encontrados coincide com o esperado (= 18) (ok)
+OK: verifica_armazem_pesquisa_categoria passou
+...verifica_armazem_pesquisa_nome (teste de um nome que nao existe): retornou NULL (ok)
+...verifica_armazem_pesquisa_nome (teste de uma categoria que existe): numero de indices
+encontrados coincide com o esperado (= 26) (ok)
+OK: verifica_armazem_pesquisa_nome passou
+...verifica_vetor_ordena: 1ª e 'ultimo componentes do vetor coincidem com o esperado
+(= cir000480 e cir000330) (ok)
+OK: verifica_vetor_ordena passou
+****** Testes 'a fatura ******
+...verifica_fatura_nova: fatura novo nao e' NULL (ok)
+...verifica_fatura_nova:
+0) (ok)
+Numero de parcelas da fatura nova coincide com o esperado (=
+...verifica_fatura_nova: Preco total
+(ok)
+da fatura nova coincide com o esperado (= 0.0)
+OK: verifica_fatura_nova passou
+...verifica_parcela_nova: parcela nova nao e' NULL (ok)
+...verifica_parcela_nova: ID coincide com o esperado (= con000101) (ok)
+...verifica_parcela_nova: Quantidade na parcela nova coincide com o esperado (= 60)
+(ok)
+8...verifica_componente_novo: Preco na parcela nova coincide com o esperado (= 1.34)
+(ok)
+OK: verifica_parcela_nova passou
+...verifica_insere_parcela_fatura: numero de parcelas coincide com o esperado (= 3)
+(ok)
+...verifica_insere_parcela_fatura: inseriu a 1ª e 3ª parcelas nas posicoes corretas
+(ok)
+...verifica_insere_parcela_fatura: quantidade do 2º parcela coincide com o esperado (=
+30) (ok)
+...verifica_insere_parcela_fatura: preco total da fatura coincide com o esperado (=
+124.30) (ok)
+OK: verifica_insere_parcela_fatura passou
+...verifica_cria_fatura: numero de parcelas da fatura coincide com o esperado (= 6)
+(ok)
+...verifica_cria_fatura: IDs da 1ª e 'ultima parcelas da fatura coincidem com o esperado
+(dio009630 e con006390) (ok)
+...verifica_cria_fatura: preço total da fatura coincide com o esperado (= 316.89) (ok)
+...verifica_cria_fatura: quantidade do componente 'cri009000' no armazem coincide com
+o esperado (= 2295) (ok)
+OK: verifica_cria_fatura passou
+FIM DOS TESTES: Todos os testes passaram
+5. Ferramenta de desenvolvimento
+A utilização de um IDE ou do Visual Studio Code é aconselhável no desenvolvimento deste
+trabalho uma vez que permite fazer depuração de uma forma mais eficaz. Poderá encontrar
+informações sobre a utilização do Visual Studio Code num breve tutorial disponibilizado no
+Moodle.
+6. Avaliação
+A classificação do trabalho é dada pela avaliação feita à implementação submetida pelos
+estudantes. A classificação final do trabalho (T1) é dada por:
+T1 = 0.8 Implementação + 0.2 Memória
+A classificação da implementação é essencialmente determinada por testes automáticos
+adicionais (por exemplo, recorrendo a ficheiros de teste de maiores dimensões). No caso de a
+implementação submetida não compilar, esta componente será 0%.
+A gestão de memória também será avaliada, sendo considerados 3 patamares: 100% nenhum
+memory leak, 50% alguns memory leaks mas pouco significativos, 0% muitos memory leaks.
+7. Teste em servidor
+Em breve será disponibilizado um servidor para que possam testar o vosso código durante o
+desenvolvimento. O código submetido neste servidor NÃO SERÁ AVALIADO. Apenas a
+submissão via moodle é válida para efeitos de avaliação.
+98. Submissão da resolução
+A submissão é apenas possível através do Moodle e até à data indicada no início do documento.
+Deverá ser submetido um ficheiro zip contendo:
+▪ o ficheiro componentes.c com as funções implementadas;
+▪ um ficheiro autores.txt indicando o nome e número dos elementos do grupo.
+Nota importante: apenas as submissões com o seguinte nome serão aceites:
+T1_G<numero_do_grupo>.zip . Por exemplo: “ T1_G999.zip ”.
+10
