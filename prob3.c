@@ -6,8 +6,8 @@
 
 
 //a lista de amigos funciona do seguinte modo: só contem os amigos não o usuario...
-//											   conforme se vai adicionando amigos o ultimo amigo adicionado é colocado na cabeça na lista e não no fim...
-//											   o usuario é encontrado no vetor de adjacencias fazendo g->adjacencias[usuario]	
+//				               conforme se vai adicionando amigos o ultimo amigo adicionado é colocado na cabeça na lista e não no fim...
+//					       o usuario é encontrado no vetor de adjacencias fazendo g->adjacencias[usuario]	
 
 /*** problema 3 ***/
 arvore_avl* sugestao_amizade(grafo *g, int u)
