@@ -3,6 +3,6 @@ Resolução dos vários exercícios de ESDA 2021/22
 
 Os exercicios poderam depender de bibliotecas que eu não fiz upload.
 
-Neste trabalho tirei 95,2/100.
+Nota primeiro trabalho: 95,2/100.
 
 Fui descontado por não verificar alguns parametros,epecificos, de entrada.
