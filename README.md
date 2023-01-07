@@ -1,5 +1,5 @@
 # ESDA
-Resolução dos vários exercícios de ESDA 2021/22
+Resolução dos exercícios de ESDA 2021/22
 
 Média Trabalhos: 19.11
 
